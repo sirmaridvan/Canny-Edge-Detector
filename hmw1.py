@@ -21,7 +21,7 @@ def generate_output_image_file_path(image_file):
 
 def get_grayscale_image(image_file):
     image = cv2.imread(image_file)
-    return image.copy()[:,:,0]
+    return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 def print_image(image):
     plt.imshow(image)
@@ -45,7 +45,6 @@ def blur_image(image):
                                   np.array([1/8, 1/4, 1/8]),
                                   np.array([1/16, 1/8, 1/16])], np.float32)
     return convolve(image,gauss_blur_kernel)
-
 def sobel_filter(image, horizontal = 0):
     h_kernel = np.ones((3,3))
     if horizontal == 1:
@@ -98,7 +97,7 @@ def non_max_suppression(gradient, orientation):
                     suppressed_image[x][y] = gradient[x,y]
     return suppressed_image
 
-def apply_threshold(image, low_ratio=0.1, high_ratio=0.85, w=100, s=255):
+def apply_threshold(image, low_ratio=0.175, high_ratio=0.8, w=100, s=255):
     high_thres = image.max() * high_ratio
     low_thres = image.max()  * low_ratio
     print(image.max())
