@@ -122,28 +122,10 @@ def hys(image, strongs, w=100, s=255):
     dx = [1, 0, -1,  0, -1, -1, 1,  1]
     dy = [0, 1,  0, -1,  1, -1, 1, -1]
 
-    '''for index in range(len(strong_i)):
-        strong = (strong_i[index], strong_j[index])
-        if vis[strong] == False:
-            #apply dfs
-            queue = []
-            queue.clear()
-            queue.append(strong)
-            while len(queue) > 0:
-                str = queue.pop()
-                vis[str] = True
-                res[str] = 255
-                for k in range(8):
-                    nx, ny = str[0] + dx[k], str[1] + dy[k]
-                    if (nx >= 0 and nx < r and ny >= 0 and ny < c)\
-                            and (image[nx, ny] >= w) and (vis[nx, ny] == False):
-                        queue.append((nx, ny))
-            pass'''
     print(len(strongs))
     while len(strongs) > 0:
         str = strongs.pop()
         if vis[str] == False:
-            #apply dfs
             vis[str] = True
             res[str] = 255
             for k in range(8):
