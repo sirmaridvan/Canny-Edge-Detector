@@ -2,8 +2,11 @@ import os
 import glob
 import cv2
 import numpy as np
+np.seterr(divide='ignore', invalid='ignore')
 import scipy
-from matplotlib import pyplot as plt
+
+# Rıdvan SIRMA
+# 504181566
 
 def read_all_image_files():
     current_working_directory = os.path.dirname(os.path.realpath(__file__))
@@ -22,12 +25,6 @@ def generate_output_image_file_path(image_file):
 def get_grayscale_image(image_file):
     image = cv2.imread(image_file)
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-def print_image(image):
-    plt.imshow(image)
-    plt.axis('off')
-    plt.title('img1')
-    plt.show()
 
 def convolve(image, kernel):
     kernel = np.flipud(np.fliplr(kernel))
@@ -57,7 +54,7 @@ def sobel_filter(image, horizontal = 0):
                                       np.array([-1, 0, 1])], np.float32)
     return convolve(image,h_kernel)
 
-def get_gradiants(image):
+def get_gradients(image):
     Gx = sobel_filter(image, 1)
     Gy = sobel_filter(image, 0)
     G = np.sqrt(np.square(Gx)+np.square(Gy))
@@ -97,12 +94,9 @@ def non_max_suppression(gradient, orientation):
                     suppressed_image[x][y] = gradient[x,y]
     return suppressed_image
 
-def apply_threshold(image, low_ratio=0.175, high_ratio=0.8, w=100, s=255):
+def apply_threshold(image, low_ratio=0.15, high_ratio=0.8, w=100, s=255):
     high_thres = image.max() * high_ratio
     low_thres = image.max()  * low_ratio
-    print(image.max())
-    print(high_thres)
-    print(low_thres)
     r,c = image.shape
     thres = np.zeros((r,c))
     strongs = []
@@ -122,12 +116,11 @@ def hys(image, strongs, w=100, s=255):
     dx = [1, 0, -1,  0, -1, -1, 1,  1]
     dy = [0, 1,  0, -1,  1, -1, 1, -1]
 
-    print(len(strongs))
     while len(strongs) > 0:
         str = strongs.pop()
         if vis[str] == False:
             vis[str] = True
-            res[str] = 255
+            res[str] = s
             for k in range(8):
                 for col in range(1, 20):
                     nx, ny = str[0] + col* dx[k], str[1] + col* dy[k]
@@ -142,7 +135,7 @@ def hys(image, strongs, w=100, s=255):
 def apply_canny_edge_detector(image):
     blurred_image = blur_image(image)
 
-    edge_gradiant = get_gradiants(blurred_image)
+    edge_gradiant = get_gradients(blurred_image)
     orientation = get_orientation(blurred_image)
 
     suppressed_image = non_max_suppression(edge_gradiant, orientation)
